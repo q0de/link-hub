@@ -3,6 +3,15 @@ import { supabase } from '../../lib/supabase'
 import type { Profile, Theme } from '../../types/database'
 import { themePresets } from '../../lib/themes'
 
+// Helper function to lighten a hex color
+function lightenColor(color: string, percent: number): string {
+  const num = parseInt(color.replace('#', ''), 16)
+  const r = (num >> 16) + Math.round((255 - (num >> 16)) * percent)
+  const g = ((num >> 8) & 0x00FF) + Math.round((255 - ((num >> 8) & 0x00FF)) * percent)
+  const b = (num & 0x0000FF) + Math.round((255 - (num & 0x0000FF)) * percent)
+  return '#' + (0x1000000 + (r < 255 ? r : 255) * 0x10000 + (g < 255 ? g : 255) * 0x100 + (b < 255 ? b : 255)).toString(16).slice(1)
+}
+
 interface SettingsTabProps {
   profile: Profile | null
   onUpdate: () => void
@@ -127,7 +136,14 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
 
       <div className="space-y-6">
         {/* Profile Section */}
-        <div className="bg-dark-card border border-dark-border rounded-xl p-6">
+        <div 
+          className="border rounded-xl p-6"
+          style={{ 
+            backgroundColor: lightenColor(formData.backgroundColor, 0.15),
+            borderColor: formData.accentColor + '40',
+            color: formData.textColor
+          }}
+        >
           <h3 className="text-lg font-semibold mb-4">Profile</h3>
           <div className="space-y-4">
             <div>
@@ -154,7 +170,12 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                style={{
+                  backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                  borderColor: formData.accentColor + '40',
+                  color: formData.textColor
+                }}
                 onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                 onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
               />
@@ -164,7 +185,12 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
               <textarea
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none"
+                style={{
+                  backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                  borderColor: formData.accentColor + '40',
+                  color: formData.textColor
+                }}
                 onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                 onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 rows={3}
@@ -175,11 +201,21 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
         </div>
 
         {/* Theme Section */}
-        <div className="bg-dark-card border border-dark-border rounded-xl p-6">
+        <div 
+          className="border rounded-xl p-6"
+          style={{ 
+            backgroundColor: lightenColor(formData.backgroundColor, 0.15),
+            borderColor: formData.accentColor + '40',
+            color: formData.textColor
+          }}
+        >
           <h3 className="text-lg font-semibold mb-4">Theme</h3>
           
           {/* Live Preview */}
-          <div className="mb-6 p-4 rounded-xl border border-dark-border" style={{ backgroundColor: formData.backgroundColor }}>
+          <div className="mb-6 p-4 rounded-xl border" style={{ 
+            backgroundColor: formData.backgroundColor,
+            borderColor: formData.accentColor + '40'
+          }}>
             <div className="text-center mb-4">
               <div
                 className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl font-bold border-4"
@@ -291,7 +327,7 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
             </div>
           </div>
 
-          <div className="border-t border-dark-border pt-4 mt-4">
+          <div className="border-t pt-4 mt-4" style={{ borderColor: formData.accentColor + '40' }}>
             <label className="block text-sm font-medium mb-4">Customize Colors</label>
             <div className="space-y-4">
             <div>
@@ -307,7 +343,12 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                   type="text"
                   value={formData.backgroundColor}
                   onChange={(e) => setFormData({ ...formData, backgroundColor: e.target.value })}
-                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                  className="flex-1 px-4 py-2 border rounded-lg focus:outline-none"
+                  style={{
+                    backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                    borderColor: formData.accentColor + '40',
+                    color: formData.textColor
+                  }}
                   onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                   onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
@@ -326,7 +367,12 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                   type="text"
                   value={formData.textColor}
                   onChange={(e) => setFormData({ ...formData, textColor: e.target.value })}
-                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                  className="flex-1 px-4 py-2 border rounded-lg focus:outline-none"
+                  style={{
+                    backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                    borderColor: formData.accentColor + '40',
+                    color: formData.textColor
+                  }}
                   onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                   onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
@@ -345,7 +391,12 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                   type="text"
                   value={formData.accentColor}
                   onChange={(e) => setFormData({ ...formData, accentColor: e.target.value })}
-                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                  className="flex-1 px-4 py-2 border rounded-lg focus:outline-none"
+                  style={{
+                    backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                    borderColor: formData.accentColor + '40',
+                    color: formData.textColor
+                  }}
                   onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                   onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
@@ -360,13 +411,25 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                     onClick={() => setFormData({ ...formData, buttonStyle: style })}
                     className={`flex-1 px-4 py-2 border rounded-lg font-medium transition-colors capitalize ${
                       formData.buttonStyle === style
-                        ? 'border-dark-border text-white'
-                        : 'bg-dark-bg border-dark-border hover:bg-dark-border'
+                        ? 'text-white'
+                        : ''
                     }`}
                     style={formData.buttonStyle === style ? {
                       backgroundColor: formData.accentColor,
                       borderColor: formData.accentColor
-                    } : {}}
+                    } : {
+                      backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                      borderColor: formData.accentColor + '40',
+                      color: formData.textColor
+                    }}
+                    onMouseEnter={(e) => {
+                      if (formData.buttonStyle !== style) {
+                        e.currentTarget.style.opacity = '0.8'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.opacity = '1'
+                    }}
                   >
                     {style}
                   </button>
