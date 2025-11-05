@@ -34,26 +34,32 @@ export default function Auth() {
         })
         if (signUpError) throw signUpError
 
-        // Create profile after signup
+        // Profile is created automatically by database trigger
+        // Wait a moment for trigger to complete, then update username
+        await new Promise(resolve => setTimeout(resolve, 500))
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
+          // Update profile with username (trigger creates it with default username)
           const { error: profileError } = await supabase
             .from('profiles')
-            .insert({
-              id: user.id,
-              username: username,
-              theme: {
-                backgroundColor: '#0f0f0f',
-                textColor: '#ffffff',
-                accentColor: '#ff7e29',
-                buttonStyle: 'rounded',
-              },
-            })
-          if (profileError) throw profileError
+            .update({ username: username })
+            .eq('id', user.id)
+          // Ignore error if profile doesn't exist yet or username already set
+          if (profileError && !profileError.message.includes('duplicate')) {
+            console.error('Profile update error:', profileError)
+          }
         }
       }
     } catch (err: any) {
-      setError(err.message)
+      console.error('Auth error:', err)
+      // Show user-friendly error messages
+      if (err.message?.includes('duplicate key') || err.message?.includes('username')) {
+        setError('This username is already taken. Please choose another one.')
+      } else if (err.message?.includes('email')) {
+        setError('This email is already registered. Try logging in instead.')
+      } else {
+        setError(err.message || 'An error occurred. Please try again.')
+      }
     } finally {
       setLoading(false)
     }
