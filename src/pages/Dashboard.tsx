@@ -105,24 +105,11 @@ export default function Dashboard() {
 
         {/* Tab Content */}
         <Routes>
-          {profile ? (
-            <>
-              <Route path="links" element={<LinksTab profileId={profile.id} />} />
-              <Route path="domains" element={<DomainsTab profileId={profile.id} />} />
-              <Route path="analytics" element={<AnalyticsTab profileId={profile.id} />} />
-              <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} />} />
-              <Route path="*" element={<LinksTab profileId={profile.id} />} />
-            </>
-          ) : (
-            <>
-              <Route path="settings" element={<SettingsTab profile={null} onUpdate={loadProfile} />} />
-              <Route path="*" element={
-                <div className="text-center py-12">
-                  <p className="text-gray-400">Profile not found. Please refresh the page.</p>
-                </div>
-              } />
-            </>
-          )}
+          <Route path="links" element={profile ? <LinksTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
+          <Route path="domains" element={profile ? <DomainsTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
+          <Route path="analytics" element={profile ? <AnalyticsTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
+          <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} />} />
+          <Route path="*" element={profile ? <LinksTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Profile not found. Please refresh the page.</p></div>} />
         </Routes>
       </div>
     </div>
