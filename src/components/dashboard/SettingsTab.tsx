@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import type { Profile, Theme } from '../../types/database'
 import { themePresets } from '../../lib/themes'
@@ -6,11 +6,11 @@ import { themePresets } from '../../lib/themes'
 interface SettingsTabProps {
   profile: Profile | null
   onUpdate: () => void
-  theme: Theme
+  theme?: Theme // Optional since we're using formData for real-time updates
   onThemeChange?: (theme: Theme) => void
 }
 
-export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }: SettingsTabProps) {
+export default function SettingsTab({ profile, onUpdate, onThemeChange }: SettingsTabProps) {
   const [formData, setFormData] = useState({
     username: '',
     bio: '',
@@ -35,8 +35,13 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
     }
   }, [profile])
 
-  // Update parent theme in real-time when formData changes
+  // Update parent theme in real-time when formData changes (skip initial mount)
+  const isInitialMount = useRef(true)
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
     if (onThemeChange) {
       const newTheme: Theme = {
         backgroundColor: formData.backgroundColor,
@@ -150,7 +155,7 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
-                onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                 onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
               />
             </div>
@@ -160,7 +165,7 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
-                onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                 onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 rows={3}
                 placeholder="Tell us about yourself..."
@@ -263,8 +268,8 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
                         : 'border-dark-border hover:border-dark-border'
                     }`}
                     style={isActive ? {
-                      borderColor: theme.accentColor,
-                      backgroundColor: theme.accentColor + '10'
+                      borderColor: formData.accentColor,
+                      backgroundColor: formData.accentColor + '10'
                     } : {}}
                   >
                     <div className="text-2xl mb-2">{preset.preview}</div>
@@ -303,7 +308,7 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
                   value={formData.backgroundColor}
                   onChange={(e) => setFormData({ ...formData, backgroundColor: e.target.value })}
                   className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
-                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                   onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
@@ -322,7 +327,7 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
                   value={formData.textColor}
                   onChange={(e) => setFormData({ ...formData, textColor: e.target.value })}
                   className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
-                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                   onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
@@ -341,7 +346,7 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
                   value={formData.accentColor}
                   onChange={(e) => setFormData({ ...formData, accentColor: e.target.value })}
                   className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
-                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${formData.accentColor}` }}
                   onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
@@ -359,8 +364,8 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
                         : 'bg-dark-bg border-dark-border hover:bg-dark-border'
                     }`}
                     style={formData.buttonStyle === style ? {
-                      backgroundColor: theme.accentColor,
-                      borderColor: theme.accentColor
+                      backgroundColor: formData.accentColor,
+                      borderColor: formData.accentColor
                     } : {}}
                   >
                     {style}
@@ -375,7 +380,10 @@ export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }:
         <button
           onClick={handleSave}
           disabled={saving}
-          className="w-full px-4 py-3 bg-accent hover:bg-accent/90 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ backgroundColor: formData.accentColor }}
+          onMouseEnter={(e) => { if (!saving) e.currentTarget.style.opacity = '0.9' }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1' }}
         >
           {saving ? 'Saving...' : 'Save Settings'}
         </button>
