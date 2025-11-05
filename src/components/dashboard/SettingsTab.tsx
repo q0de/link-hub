@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import type { Profile, Theme } from '../../types/database'
+import { themePresets, type ThemePreset } from '../../lib/themes'
 
 interface SettingsTabProps {
   profile: Profile | null
@@ -151,7 +152,58 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
         {/* Theme Section */}
         <div className="bg-dark-card border border-dark-border rounded-xl p-6">
           <h3 className="text-lg font-semibold mb-4">Theme</h3>
-          <div className="space-y-4">
+          
+          {/* Theme Presets */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium mb-3">Choose a Preset Theme</label>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {themePresets.map((preset) => {
+                const isActive = 
+                  formData.backgroundColor === preset.backgroundColor &&
+                  formData.textColor === preset.textColor &&
+                  formData.accentColor === preset.accentColor &&
+                  formData.buttonStyle === preset.buttonStyle
+
+                return (
+                  <button
+                    key={preset.name}
+                    onClick={() => {
+                      setFormData({
+                        ...formData,
+                        backgroundColor: preset.backgroundColor,
+                        textColor: preset.textColor,
+                        accentColor: preset.accentColor,
+                        buttonStyle: preset.buttonStyle,
+                      })
+                    }}
+                    className={`p-4 border-2 rounded-xl transition-all text-left ${
+                      isActive
+                        ? 'border-accent bg-accent/10'
+                        : 'border-dark-border hover:border-accent/50'
+                    }`}
+                  >
+                    <div className="text-2xl mb-2">{preset.preview}</div>
+                    <div className="font-semibold text-sm mb-1">{preset.name}</div>
+                    <div className="text-xs text-gray-400">{preset.description}</div>
+                    <div className="flex gap-1 mt-2">
+                      <div
+                        className="w-4 h-4 rounded-full border border-dark-border"
+                        style={{ backgroundColor: preset.backgroundColor }}
+                      />
+                      <div
+                        className="w-4 h-4 rounded-full border border-dark-border"
+                        style={{ backgroundColor: preset.accentColor }}
+                      />
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="border-t border-dark-border pt-4 mt-4">
+            <label className="block text-sm font-medium mb-4">Customize Colors</label>
+            <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">Background Color</label>
               <div className="flex gap-3">
@@ -221,6 +273,7 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                 ))}
               </div>
             </div>
+          </div>
           </div>
         </div>
 
