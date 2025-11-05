@@ -25,9 +25,14 @@ export default function PublicProfile() {
   useEffect(() => {
     if (username) {
       loadProfile()
-      checkIfOwnProfile()
     }
   }, [username])
+
+  useEffect(() => {
+    if (profile) {
+      checkIfOwnProfile()
+    }
+  }, [profile])
 
   const checkIfOwnProfile = async () => {
     try {
@@ -57,12 +62,6 @@ export default function PublicProfile() {
 
       setProfile(profileData)
       setTheme(profileData.theme || theme)
-
-      // Check if this is the user's own profile
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setIsOwnProfile(user.id === profileData.id)
-      }
 
       // Load links and domains
       const [linksRes, domainsRes] = await Promise.all([
