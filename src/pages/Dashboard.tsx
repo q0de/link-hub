@@ -142,7 +142,7 @@ export default function Dashboard() {
           <Route path="links" element={profile ? <LinksTab profileId={profile.id} theme={theme} /> : <div className="text-center py-12" style={{ color: theme.textColor + '80' }}>Loading...</div>} />
           <Route path="domains" element={profile ? <DomainsTab profileId={profile.id} theme={theme} /> : <div className="text-center py-12" style={{ color: theme.textColor + '80' }}>Loading...</div>} />
           <Route path="analytics" element={profile ? <AnalyticsTab profileId={profile.id} theme={theme} /> : <div className="text-center py-12" style={{ color: theme.textColor + '80' }}>Loading...</div>} />
-          <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} theme={theme} />} />
+          <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} theme={theme} onThemeChange={setTheme} />} />
           <Route path="*" element={<Navigate to="links" replace />} />
         </Routes>
       </div>

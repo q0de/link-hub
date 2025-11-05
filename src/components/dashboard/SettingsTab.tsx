@@ -7,9 +7,10 @@ interface SettingsTabProps {
   profile: Profile | null
   onUpdate: () => void
   theme: Theme
+  onThemeChange?: (theme: Theme) => void
 }
 
-export default function SettingsTab({ profile, onUpdate, theme }: SettingsTabProps) {
+export default function SettingsTab({ profile, onUpdate, theme, onThemeChange }: SettingsTabProps) {
   const [formData, setFormData] = useState({
     username: '',
     bio: '',
@@ -33,6 +34,19 @@ export default function SettingsTab({ profile, onUpdate, theme }: SettingsTabPro
       })
     }
   }, [profile])
+
+  // Update parent theme in real-time when formData changes
+  useEffect(() => {
+    if (onThemeChange) {
+      const newTheme: Theme = {
+        backgroundColor: formData.backgroundColor,
+        textColor: formData.textColor,
+        accentColor: formData.accentColor,
+        buttonStyle: formData.buttonStyle,
+      }
+      onThemeChange(newTheme)
+    }
+  }, [formData.backgroundColor, formData.textColor, formData.accentColor, formData.buttonStyle, onThemeChange])
 
   const handleSave = async () => {
     if (!profile) return
@@ -233,13 +247,15 @@ export default function SettingsTab({ profile, onUpdate, theme }: SettingsTabPro
                   <button
                     key={preset.name}
                     onClick={() => {
-                      setFormData({
+                      const updatedFormData = {
                         ...formData,
                         backgroundColor: preset.backgroundColor,
                         textColor: preset.textColor,
                         accentColor: preset.accentColor,
                         // Keep the current buttonStyle instead of changing it
-                      })
+                      }
+                      setFormData(updatedFormData)
+                      // Theme will update via useEffect
                     }}
                     className={`p-4 border-2 rounded-xl transition-all text-left ${
                       isActive
