@@ -153,6 +153,65 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
         <div className="bg-dark-card border border-dark-border rounded-xl p-6">
           <h3 className="text-lg font-semibold mb-4">Theme</h3>
           
+          {/* Live Preview */}
+          <div className="mb-6 p-4 rounded-xl border border-dark-border" style={{ backgroundColor: formData.backgroundColor }}>
+            <div className="text-center mb-4">
+              <div
+                className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl font-bold border-4"
+                style={{ 
+                  borderColor: formData.accentColor,
+                  backgroundColor: formData.accentColor + '20'
+                }}
+              >
+                {profile?.username?.charAt(0).toUpperCase() || 'U'}
+              </div>
+              <h4 className="font-bold text-lg mb-1" style={{ color: formData.textColor }}>
+                {profile?.username || 'Your Name'}
+              </h4>
+              <p className="text-sm opacity-80" style={{ color: formData.textColor }}>
+                {profile?.bio || 'Your bio will appear here'}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <div
+                className={`w-full px-4 py-2 font-semibold text-center transition-all ${
+                  formData.buttonStyle === 'solid'
+                    ? 'rounded-lg'
+                    : formData.buttonStyle === 'outline'
+                    ? 'border-2 rounded-lg'
+                    : 'rounded-2xl'
+                }`}
+                style={{
+                  backgroundColor: formData.buttonStyle === 'solid' || formData.buttonStyle === 'rounded' 
+                    ? formData.accentColor 
+                    : 'transparent',
+                  borderColor: formData.buttonStyle === 'outline' ? formData.accentColor : 'transparent',
+                  color: formData.buttonStyle === 'outline' ? formData.accentColor : '#ffffff',
+                }}
+              >
+                🔗 Example Link
+              </div>
+              <div
+                className={`w-full px-4 py-2 font-semibold text-center transition-all ${
+                  formData.buttonStyle === 'solid'
+                    ? 'rounded-lg'
+                    : formData.buttonStyle === 'outline'
+                    ? 'border-2 rounded-lg'
+                    : 'rounded-2xl'
+                }`}
+                style={{
+                  backgroundColor: formData.buttonStyle === 'solid' || formData.buttonStyle === 'rounded' 
+                    ? formData.accentColor 
+                    : 'transparent',
+                  borderColor: formData.buttonStyle === 'outline' ? formData.accentColor : 'transparent',
+                  color: formData.buttonStyle === 'outline' ? formData.accentColor : '#ffffff',
+                }}
+              >
+                🌐 Another Link
+              </div>
+            </div>
+          </div>
+
           {/* Theme Presets */}
           <div className="mb-6">
             <label className="block text-sm font-medium mb-3">Choose a Preset Theme</label>
