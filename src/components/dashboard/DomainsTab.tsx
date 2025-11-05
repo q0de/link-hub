@@ -58,15 +58,25 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
   }
 
   const handleSave = async () => {
+    // Validation
+    if (!formData.domain_name.trim()) {
+      alert('Please enter a domain name')
+      return
+    }
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      alert('Please enter a valid price')
+      return
+    }
+
     try {
       if (editingDomain) {
         const { error } = await supabase
           .from('domains')
           .update({
-            domain_name: formData.domain_name,
+            domain_name: formData.domain_name.trim(),
             price: parseFloat(formData.price),
-            description: formData.description || null,
-            buy_url: formData.buy_url || null,
+            description: formData.description.trim() || null,
+            buy_url: formData.buy_url.trim() || null,
           })
           .eq('id', editingDomain.id)
         if (error) throw error
@@ -75,18 +85,18 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
           .from('domains')
           .insert({
             profile_id: profileId,
-            domain_name: formData.domain_name,
+            domain_name: formData.domain_name.trim(),
             price: parseFloat(formData.price),
-            description: formData.description || null,
-            buy_url: formData.buy_url || null,
+            description: formData.description.trim() || null,
+            buy_url: formData.buy_url.trim() || null,
           })
         if (error) throw error
       }
       setShowModal(false)
       loadDomains()
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error saving domain:', err)
-      alert('Error saving domain')
+      alert(err.message || 'Error saving domain. Please try again.')
     }
   }
 
@@ -121,8 +131,15 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {domains.length === 0 ? (
           <div className="col-span-full text-center py-12 text-gray-400">
-            <p className="text-lg mb-2">No domains listed yet</p>
-            <p>Add domains you own or are selling!</p>
+            <div className="text-6xl mb-4">🌐</div>
+            <p className="text-lg mb-2 font-semibold">No domains listed yet</p>
+            <p className="mb-6">Add domains you own or are selling!</p>
+            <button
+              onClick={handleAdd}
+              className="px-6 py-3 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors"
+            >
+              + Add Your First Domain
+            </button>
           </div>
         ) : (
           domains.map((domain) => (
