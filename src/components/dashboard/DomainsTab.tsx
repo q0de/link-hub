@@ -199,11 +199,12 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
               <div>
                 <label className="block text-sm font-medium mb-2">Buy URL (optional)</label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.buy_url}
                   onChange={(e) => setFormData({ ...formData, buy_url: e.target.value })}
                   className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="https://..."
+                  autoComplete="off"
                 />
               </div>
             </div>

@@ -221,11 +221,12 @@ export default function LinksTab({ profileId }: LinksTabProps) {
               <div>
                 <label className="block text-sm font-medium mb-2">URL</label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
                   className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="https://example.com"
+                  autoComplete="off"
                 />
               </div>
               <div>
