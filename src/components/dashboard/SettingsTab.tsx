@@ -88,7 +88,15 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
   }
 
   if (!profile) {
-    return <div className="text-center py-8">Loading...</div>
+    return (
+      <div className="max-w-2xl">
+        <h2 className="text-2xl font-bold mb-6">Settings</h2>
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading profile settings...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
