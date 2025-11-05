@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import type { Domain } from '../../types/database'
+import type { Domain, Theme } from '../../types/database'
 import { motion } from 'framer-motion'
 
 interface DomainsTabProps {
   profileId: string
+  theme: Theme
 }
 
-export default function DomainsTab({ profileId }: DomainsTabProps) {
+export default function DomainsTab({ profileId, theme }: DomainsTabProps) {
   const [domains, setDomains] = useState<Domain[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -122,7 +123,10 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
         <h2 className="text-2xl font-bold">Domains for Sale</h2>
         <button
           onClick={handleAdd}
-          className="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors"
+          className="px-4 py-2 text-white rounded-lg font-medium transition-colors"
+          style={{ backgroundColor: theme.accentColor }}
+          onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9' }}
+          onMouseLeave={(e) => { e.currentTarget.style.opacity = '1' }}
         >
           + Add Domain
         </button>
@@ -188,8 +192,10 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
                   type="text"
                   value={formData.domain_name}
                   onChange={(e) => setFormData({ ...formData, domain_name: e.target.value })}
-                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
                   placeholder="example.io"
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
               <div>
@@ -199,8 +205,10 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
                   step="0.01"
                   value={formData.price}
                   onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
                   placeholder="1500.00"
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
               <div>
@@ -208,9 +216,11 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
                   rows={3}
                   placeholder="Brief description of the domain..."
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
               <div>
@@ -219,9 +229,11 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
                   type="text"
                   value={formData.buy_url}
                   onChange={(e) => setFormData({ ...formData, buy_url: e.target.value })}
-                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
                   placeholder="https://..."
                   autoComplete="off"
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
             </div>
@@ -234,7 +246,10 @@ export default function DomainsTab({ profileId }: DomainsTabProps) {
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors"
+                className="flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors"
+                style={{ backgroundColor: theme.accentColor }}
+                onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9' }}
+                onMouseLeave={(e) => { e.currentTarget.style.opacity = '1' }}
               >
                 Save
               </button>

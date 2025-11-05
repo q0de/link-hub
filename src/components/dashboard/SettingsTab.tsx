@@ -6,9 +6,10 @@ import { themePresets } from '../../lib/themes'
 interface SettingsTabProps {
   profile: Profile | null
   onUpdate: () => void
+  theme: Theme
 }
 
-export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
+export default function SettingsTab({ profile, onUpdate, theme }: SettingsTabProps) {
   const [formData, setFormData] = useState({
     username: '',
     bio: '',
@@ -78,8 +79,9 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
         .eq('id', profile.id)
 
       if (error) throw error
+      // Reload page to apply theme changes everywhere
       onUpdate()
-      alert('Settings saved!')
+      window.location.reload()
     } catch (err: any) {
       console.error('Error saving settings:', err)
       alert('Error saving settings: ' + err.message)
@@ -133,7 +135,9 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                 type="text"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
               />
             </div>
             <div>
@@ -141,7 +145,9 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
               <textarea
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 rows={3}
                 placeholder="Tell us about yourself..."
               />
@@ -237,9 +243,13 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                     }}
                     className={`p-4 border-2 rounded-xl transition-all text-left ${
                       isActive
-                        ? 'border-accent bg-accent/10'
-                        : 'border-dark-border hover:border-accent/50'
+                        ? 'border-dark-border'
+                        : 'border-dark-border hover:border-dark-border'
                     }`}
+                    style={isActive ? {
+                      borderColor: theme.accentColor,
+                      backgroundColor: theme.accentColor + '10'
+                    } : {}}
                   >
                     <div className="text-2xl mb-2">{preset.preview}</div>
                     <div className="font-semibold text-sm mb-1">{preset.name}</div>
@@ -276,7 +286,9 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                   type="text"
                   value={formData.backgroundColor}
                   onChange={(e) => setFormData({ ...formData, backgroundColor: e.target.value })}
-                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
             </div>
@@ -293,7 +305,9 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                   type="text"
                   value={formData.textColor}
                   onChange={(e) => setFormData({ ...formData, textColor: e.target.value })}
-                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
             </div>
@@ -310,7 +324,9 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                   type="text"
                   value={formData.accentColor}
                   onChange={(e) => setFormData({ ...formData, accentColor: e.target.value })}
-                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
             </div>
@@ -323,9 +339,13 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                     onClick={() => setFormData({ ...formData, buttonStyle: style })}
                     className={`flex-1 px-4 py-2 border rounded-lg font-medium transition-colors capitalize ${
                       formData.buttonStyle === style
-                        ? 'bg-accent border-accent text-white'
+                        ? 'border-dark-border text-white'
                         : 'bg-dark-bg border-dark-border hover:bg-dark-border'
                     }`}
+                    style={formData.buttonStyle === style ? {
+                      backgroundColor: theme.accentColor,
+                      borderColor: theme.accentColor
+                    } : {}}
                   >
                     {style}
                   </button>

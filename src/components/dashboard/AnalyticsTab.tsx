@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
+import type { Theme } from '../../types/database'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 interface AnalyticsTabProps {
   profileId: string
+  theme: Theme
 }
 
 interface LinkStats {
@@ -18,11 +20,14 @@ interface DomainStats {
   clicks: number
 }
 
-export default function AnalyticsTab({ profileId }: AnalyticsTabProps) {
+export default function AnalyticsTab({ profileId, theme }: AnalyticsTabProps) {
   const [linkStats, setLinkStats] = useState<LinkStats[]>([])
   const [domainStats, setDomainStats] = useState<DomainStats[]>([])
   const [totalViews, setTotalViews] = useState(0)
   const [loading, setLoading] = useState(true)
+  
+  // Use theme for chart colors
+  const chartColor = theme.accentColor
 
   useEffect(() => {
     loadAnalytics()
@@ -101,7 +106,14 @@ export default function AnalyticsTab({ profileId }: AnalyticsTabProps) {
     return <div className="text-center py-8">Loading analytics...</div>
   }
 
-  const COLORS = ['#ff7e29', '#4ade80', '#60a5fa', '#f472b6', '#a78bfa']
+  // Generate colors based on theme accent color
+  const COLORS = [
+    chartColor,
+    '#4ade80',
+    '#60a5fa',
+    '#f472b6',
+    '#a78bfa'
+  ]
 
   return (
     <div>
@@ -139,7 +151,7 @@ export default function AnalyticsTab({ profileId }: AnalyticsTabProps) {
                   borderRadius: '8px',
                 }}
               />
-              <Bar dataKey="clicks" fill="#ff7e29" />
+              <Bar dataKey="clicks" fill={chartColor} />
             </BarChart>
           </ResponsiveContainer>
         </div>

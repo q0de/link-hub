@@ -4,11 +4,12 @@ import type { DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { supabase } from '../../lib/supabase'
-import type { Link as LinkType } from '../../types/database'
+import type { Link as LinkType, Theme } from '../../types/database'
 import { motion } from 'framer-motion'
 
 interface LinksTabProps {
   profileId: string
+  theme: Theme
 }
 
 function SortableLinkItem({ link, onEdit, onDelete }: { link: LinkType; onEdit: (link: LinkType) => void; onDelete: (id: string) => void }) {
@@ -49,7 +50,7 @@ function SortableLinkItem({ link, onEdit, onDelete }: { link: LinkType; onEdit: 
   )
 }
 
-export default function LinksTab({ profileId }: LinksTabProps) {
+export default function LinksTab({ profileId, theme }: LinksTabProps) {
   const [links, setLinks] = useState<LinkType[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -171,7 +172,16 @@ export default function LinksTab({ profileId }: LinksTabProps) {
         <h2 className="text-2xl font-bold">Your Links</h2>
         <button
           onClick={handleAdd}
-          className="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors"
+          className="px-4 py-2 text-white rounded-lg font-medium transition-colors"
+          style={{
+            backgroundColor: theme.accentColor,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.opacity = '0.9'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.opacity = '1'
+          }}
         >
           + Add Link
         </button>
@@ -214,8 +224,11 @@ export default function LinksTab({ profileId }: LinksTabProps) {
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
+                  style={{ '--tw-ring-color': theme.accentColor } as React.CSSProperties & { '--tw-ring-color': string }}
                   placeholder="My Website"
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
               <div>
@@ -224,21 +237,45 @@ export default function LinksTab({ profileId }: LinksTabProps) {
                   type="text"
                   value={formData.url}
                   onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
                   placeholder="https://example.com"
                   autoComplete="off"
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Icon (emoji)</label>
-                <input
-                  type="text"
-                  value={formData.icon}
-                  onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
-                  className="w-full px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={formData.icon}
+                    onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+                    className="flex-1 px-4 py-2 bg-dark-bg border border-dark-border rounded-lg focus:outline-none"
                   placeholder="🔗"
                   maxLength={2}
-                />
+                  onFocus={(e) => { e.currentTarget.style.boxShadow = `0 0 0 2px ${theme.accentColor}` }}
+                  onBlur={(e) => { e.currentTarget.style.boxShadow = '' }}
+                  />
+                  <div className="flex gap-1 bg-dark-bg border border-dark-border rounded-lg p-1">
+                    {['🔗', '📧', '💼', '🌐', '📱', '🎨', '📝', '🎵', '📸', '🎬', '📚', '⚡', '🔥', '⭐', '💡', '🚀'].map((emoji) => (
+                      <button
+                        key={emoji}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, icon: emoji })}
+                        className="px-2 py-1 hover:bg-dark-border rounded text-lg transition-colors"
+                        title={emoji}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {formData.icon && (
+                  <div className="mt-2 text-sm text-gray-400">
+                    Preview: <span className="text-2xl">{formData.icon}</span>
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex gap-3 mt-6">
@@ -250,7 +287,16 @@ export default function LinksTab({ profileId }: LinksTabProps) {
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors"
+                className="flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors"
+                style={{
+                  backgroundColor: theme.accentColor,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.opacity = '0.9'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.opacity = '1'
+                }}
               >
                 Save
               </button>

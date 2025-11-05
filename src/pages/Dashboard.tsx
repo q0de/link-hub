@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import type { Profile } from '../types/database'
+import type { Profile, Theme } from '../types/database'
 import LinksTab from '../components/dashboard/LinksTab'
 import DomainsTab from '../components/dashboard/DomainsTab'
 import SettingsTab from '../components/dashboard/SettingsTab'
@@ -12,6 +12,12 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [theme, setTheme] = useState<Theme>({
+    backgroundColor: '#0f0f0f',
+    textColor: '#ffffff',
+    accentColor: '#ff7e29',
+    buttonStyle: 'rounded',
+  })
 
   useEffect(() => {
     loadProfile()
@@ -30,6 +36,9 @@ export default function Dashboard() {
 
       if (error) throw error
       setProfile(data)
+      if (data?.theme) {
+        setTheme(data.theme)
+      }
     } catch (err) {
       console.error('Error loading profile:', err)
     } finally {
@@ -55,14 +64,14 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-accent"></div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: theme.backgroundColor }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderColor: theme.accentColor }}></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark-bg">
+    <div className="min-h-screen" style={{ backgroundColor: theme.backgroundColor, color: theme.textColor }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
@@ -73,7 +82,8 @@ export default function Dashboard() {
                 href={`/u/${profile.username}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-accent hover:underline"
+                className="hover:underline"
+                style={{ color: theme.accentColor }}
               >
                 View your profile → {window.location.origin}/u/{profile.username}
               </a>
@@ -81,23 +91,44 @@ export default function Dashboard() {
           </div>
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-dark-card border border-dark-border rounded-lg hover:bg-dark-border transition-colors"
+            className="px-4 py-2 rounded-lg transition-colors border"
+            style={{
+              backgroundColor: theme.backgroundColor,
+              borderColor: theme.accentColor + '40',
+              color: theme.textColor,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = theme.accentColor + '20'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = theme.backgroundColor
+            }}
           >
             Logout
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-dark-border">
+        <div className="flex gap-2 mb-8 border-b" style={{ borderColor: theme.accentColor + '40' }}>
           {tabs.map((tab) => (
             <Link
               key={tab.path}
               to={`/dashboard/${tab.path}`}
-              className={`px-6 py-3 font-medium transition-colors border-b-2 ${
-                currentTab === tab.path
-                  ? 'border-accent text-accent'
-                  : 'border-transparent text-gray-400 hover:text-white'
-              }`}
+              className="px-6 py-3 font-medium transition-colors border-b-2"
+              style={{
+                borderColor: currentTab === tab.path ? theme.accentColor : 'transparent',
+                color: currentTab === tab.path ? theme.accentColor : theme.textColor + '80',
+              }}
+              onMouseEnter={(e) => {
+                if (currentTab !== tab.path) {
+                  e.currentTarget.style.color = theme.textColor
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (currentTab !== tab.path) {
+                  e.currentTarget.style.color = theme.textColor + '80'
+                }
+              }}
             >
               <span className="mr-2">{tab.icon}</span>
               {tab.label}
@@ -108,10 +139,10 @@ export default function Dashboard() {
         {/* Tab Content */}
         <Routes>
           <Route path="" element={<Navigate to="links" replace />} />
-          <Route path="links" element={profile ? <LinksTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
-          <Route path="domains" element={profile ? <DomainsTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
-          <Route path="analytics" element={profile ? <AnalyticsTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
-          <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} />} />
+          <Route path="links" element={profile ? <LinksTab profileId={profile.id} theme={theme} /> : <div className="text-center py-12" style={{ color: theme.textColor + '80' }}>Loading...</div>} />
+          <Route path="domains" element={profile ? <DomainsTab profileId={profile.id} theme={theme} /> : <div className="text-center py-12" style={{ color: theme.textColor + '80' }}>Loading...</div>} />
+          <Route path="analytics" element={profile ? <AnalyticsTab profileId={profile.id} theme={theme} /> : <div className="text-center py-12" style={{ color: theme.textColor + '80' }}>Loading...</div>} />
+          <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} theme={theme} />} />
           <Route path="*" element={<Navigate to="links" replace />} />
         </Routes>
       </div>
