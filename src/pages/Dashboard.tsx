@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import type { Profile } from '../types/database'
 import LinksTab from '../components/dashboard/LinksTab'
@@ -49,7 +49,9 @@ export default function Dashboard() {
     { path: 'settings', label: 'Settings', icon: '⚙️' },
   ]
 
-  const currentTab = location.pathname.split('/').pop() || 'links'
+  // Get current tab from pathname - handle /dashboard and /dashboard/links, etc.
+  const pathParts = location.pathname.split('/').filter(Boolean)
+  const currentTab = pathParts[pathParts.length - 1] || 'links'
 
   if (loading) {
     return (
@@ -90,7 +92,7 @@ export default function Dashboard() {
           {tabs.map((tab) => (
             <Link
               key={tab.path}
-              to={tab.path}
+              to={`/dashboard/${tab.path}`}
               className={`px-6 py-3 font-medium transition-colors border-b-2 ${
                 currentTab === tab.path
                   ? 'border-accent text-accent'
@@ -105,11 +107,12 @@ export default function Dashboard() {
 
         {/* Tab Content */}
         <Routes>
+          <Route path="" element={<Navigate to="links" replace />} />
           <Route path="links" element={profile ? <LinksTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
           <Route path="domains" element={profile ? <DomainsTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
           <Route path="analytics" element={profile ? <AnalyticsTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Loading...</p></div>} />
           <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} />} />
-          <Route path="*" element={profile ? <LinksTab profileId={profile.id} /> : <div className="text-center py-12"><p className="text-gray-400">Profile not found. Please refresh the page.</p></div>} />
+          <Route path="*" element={<Navigate to="links" replace />} />
         </Routes>
       </div>
     </div>
