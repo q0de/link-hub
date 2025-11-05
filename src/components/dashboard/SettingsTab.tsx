@@ -220,8 +220,8 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                 const isActive = 
                   formData.backgroundColor === preset.backgroundColor &&
                   formData.textColor === preset.textColor &&
-                  formData.accentColor === preset.accentColor &&
-                  formData.buttonStyle === preset.buttonStyle
+                  formData.accentColor === preset.accentColor
+                  // Note: buttonStyle is not part of preset matching so users can keep their preferred style
 
                 return (
                   <button
@@ -232,7 +232,7 @@ export default function SettingsTab({ profile, onUpdate }: SettingsTabProps) {
                         backgroundColor: preset.backgroundColor,
                         textColor: preset.textColor,
                         accentColor: preset.accentColor,
-                        buttonStyle: preset.buttonStyle,
+                        // Keep the current buttonStyle instead of changing it
                       })
                     }}
                     className={`p-4 border-2 rounded-xl transition-all text-left ${
