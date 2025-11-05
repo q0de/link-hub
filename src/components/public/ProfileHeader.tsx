@@ -1,24 +1,38 @@
+import { useNavigate } from 'react-router-dom'
 import type { Profile, Theme } from '../../types/database'
 
 interface ProfileHeaderProps {
   profile: Profile
   theme: Theme
+  isOwnProfile?: boolean
 }
 
-export default function ProfileHeader({ profile, theme }: ProfileHeaderProps) {
+export default function ProfileHeader({ profile, theme, isOwnProfile = false }: ProfileHeaderProps) {
+  const navigate = useNavigate()
+
+  const handleAvatarClick = () => {
+    if (isOwnProfile) {
+      navigate('/dashboard/settings')
+    }
+  }
+
   return (
     <div>
       {profile.avatar_url ? (
         <img
           src={profile.avatar_url}
           alt={profile.username}
-          className="w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4"
+          className={`w-24 h-24 rounded-full mx-auto mb-4 object-cover border-4 ${isOwnProfile ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
           style={{ borderColor: theme.accentColor }}
+          onClick={handleAvatarClick}
+          title={isOwnProfile ? 'Click to edit settings' : undefined}
         />
       ) : (
         <div
-          className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold border-4"
+          className={`w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold border-4 ${isOwnProfile ? 'cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
           style={{ borderColor: theme.accentColor, backgroundColor: theme.accentColor + '20' }}
+          onClick={handleAvatarClick}
+          title={isOwnProfile ? 'Click to edit settings' : undefined}
         >
           {profile.username.charAt(0).toUpperCase()}
         </div>
@@ -30,4 +44,3 @@ export default function ProfileHeader({ profile, theme }: ProfileHeaderProps) {
     </div>
   )
 }
-
