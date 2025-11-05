@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import type { Profile, Link as LinkType, Domain, Theme } from '../types/database'
 import { motion } from 'framer-motion'
@@ -9,10 +9,12 @@ import DomainCard from '../components/public/DomainCard'
 
 export default function PublicProfile() {
   const { username } = useParams<{ username: string }>()
+  const navigate = useNavigate()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [links, setLinks] = useState<LinkType[]>([])
   const [domains, setDomains] = useState<Domain[]>([])
   const [loading, setLoading] = useState(true)
+  const [isOwnProfile, setIsOwnProfile] = useState(false)
   const [theme, setTheme] = useState<Theme>({
     backgroundColor: '#0f0f0f',
     textColor: '#ffffff',
@@ -23,8 +25,20 @@ export default function PublicProfile() {
   useEffect(() => {
     if (username) {
       loadProfile()
+      checkIfOwnProfile()
     }
   }, [username])
+
+  const checkIfOwnProfile = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user && profile) {
+        setIsOwnProfile(user.id === profile.id)
+      }
+    } catch (err) {
+      console.error('Error checking profile ownership:', err)
+    }
+  }
 
   const loadProfile = async () => {
     try {
@@ -43,6 +57,12 @@ export default function PublicProfile() {
 
       setProfile(profileData)
       setTheme(profileData.theme || theme)
+
+      // Check if this is the user's own profile
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setIsOwnProfile(user.id === profileData.id)
+      }
 
       // Load links and domains
       const [linksRes, domainsRes] = await Promise.all([
@@ -101,6 +121,28 @@ export default function PublicProfile() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: theme.backgroundColor, color: theme.textColor }}>
       <div className="max-w-2xl mx-auto px-4 py-12">
+        {/* Back to Dashboard Button (only if viewing own profile) */}
+        {isOwnProfile && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6"
+          >
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg border transition-all hover:opacity-80"
+              style={{
+                borderColor: theme.accentColor,
+                color: theme.textColor,
+                backgroundColor: theme.backgroundColor,
+              }}
+            >
+              <span>←</span>
+              <span>Back to Dashboard</span>
+            </button>
+          </motion.div>
+        )}
+
         {/* Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
