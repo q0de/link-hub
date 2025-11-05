@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import type { Profile, Theme } from '../../types/database'
-import { themePresets, type ThemePreset } from '../../lib/themes'
+import { themePresets } from '../../lib/themes'
 
 interface SettingsTabProps {
   profile: Profile | null
