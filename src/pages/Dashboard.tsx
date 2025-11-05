@@ -104,13 +104,19 @@ export default function Dashboard() {
         </div>
 
         {/* Tab Content */}
-        <Routes>
-          <Route path="links" element={<LinksTab profileId={profile?.id!} />} />
-          <Route path="domains" element={<DomainsTab profileId={profile?.id!} />} />
-          <Route path="analytics" element={<AnalyticsTab profileId={profile?.id!} />} />
-          <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} />} />
-          <Route path="*" element={<LinksTab profileId={profile?.id!} />} />
-        </Routes>
+        {profile ? (
+          <Routes>
+            <Route path="links" element={<LinksTab profileId={profile.id} />} />
+            <Route path="domains" element={<DomainsTab profileId={profile.id} />} />
+            <Route path="analytics" element={<AnalyticsTab profileId={profile.id} />} />
+            <Route path="settings" element={<SettingsTab profile={profile} onUpdate={loadProfile} />} />
+            <Route path="*" element={<LinksTab profileId={profile.id} />} />
+          </Routes>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-400">Profile not found. Please refresh the page.</p>
+          </div>
+        )}
       </div>
     </div>
   )

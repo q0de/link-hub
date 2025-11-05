@@ -43,16 +43,28 @@ export default function AnalyticsTab({ profileId }: AnalyticsTabProps) {
       const linkIds = links.map((l) => l.id)
       const domainIds = domains.map((d) => d.id)
 
-      const { data: clickEvents } = await supabase
-        .from('click_events')
-        .select('*')
-        .or(`link_id.in.(${linkIds.join(',')}),domain_id.in.(${domainIds.join(',')})`)
+      let clickEvents: any[] = []
+      if (linkIds.length > 0 || domainIds.length > 0) {
+        const conditions = []
+        if (linkIds.length > 0) {
+          conditions.push(`link_id.in.(${linkIds.join(',')})`)
+        }
+        if (domainIds.length > 0) {
+          conditions.push(`domain_id.in.(${domainIds.join(',')})`)
+        }
+        
+        const { data } = await supabase
+          .from('click_events')
+          .select('*')
+          .or(conditions.join(','))
+        clickEvents = data || []
+      }
 
       // Calculate stats
       const linkClicks = new Map<string, number>()
       const domainClicks = new Map<string, number>()
 
-      clickEvents?.forEach((event) => {
+      clickEvents.forEach((event) => {
         if (event.link_id) {
           linkClicks.set(event.link_id, (linkClicks.get(event.link_id) || 0) + 1)
         }
@@ -77,7 +89,7 @@ export default function AnalyticsTab({ profileId }: AnalyticsTabProps) {
         }))
       )
 
-      setTotalViews(clickEvents?.length || 0)
+      setTotalViews(clickEvents.length || 0)
     } catch (err) {
       console.error('Error loading analytics:', err)
     } finally {
@@ -165,9 +177,18 @@ export default function AnalyticsTab({ profileId }: AnalyticsTabProps) {
       )}
 
       {linkStats.length === 0 && domainStats.length === 0 && (
-        <div className="text-center py-12 text-gray-400">
-          <p className="text-lg mb-2">No analytics data yet</p>
-          <p>Start adding links and domains to see your analytics!</p>
+        <div className="bg-dark-card border border-dark-border rounded-xl p-12 text-center">
+          <div className="text-6xl mb-4">📊</div>
+          <h3 className="text-xl font-semibold mb-2">No Analytics Data Yet</h3>
+          <p className="text-gray-400 mb-4">Start adding links and domains to see your analytics!</p>
+          <div className="flex gap-4 justify-center mt-6">
+            <a href="/dashboard/links" className="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium transition-colors">
+              Add Links
+            </a>
+            <a href="/dashboard/domains" className="px-4 py-2 bg-dark-bg border border-dark-border hover:bg-dark-border rounded-lg font-medium transition-colors">
+              Add Domains
+            </a>
+          </div>
         </div>
       )}
     </div>
