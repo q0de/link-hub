@@ -172,7 +172,7 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                 style={{
-                  backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                  backgroundColor: formData.backgroundColor,
                   borderColor: formData.accentColor + '40',
                   color: formData.textColor
                 }}
@@ -187,7 +187,7 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
                 className="w-full px-4 py-2 border rounded-lg focus:outline-none"
                 style={{
-                  backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                  backgroundColor: formData.backgroundColor,
                   borderColor: formData.accentColor + '40',
                   color: formData.textColor
                 }}
@@ -345,7 +345,7 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                   onChange={(e) => setFormData({ ...formData, backgroundColor: e.target.value })}
                   className="flex-1 px-4 py-2 border rounded-lg focus:outline-none"
                   style={{
-                    backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                    backgroundColor: formData.backgroundColor,
                     borderColor: formData.accentColor + '40',
                     color: formData.textColor
                   }}
@@ -369,7 +369,7 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                   onChange={(e) => setFormData({ ...formData, textColor: e.target.value })}
                   className="flex-1 px-4 py-2 border rounded-lg focus:outline-none"
                   style={{
-                    backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                    backgroundColor: formData.backgroundColor,
                     borderColor: formData.accentColor + '40',
                     color: formData.textColor
                   }}
@@ -393,7 +393,7 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                   onChange={(e) => setFormData({ ...formData, accentColor: e.target.value })}
                   className="flex-1 px-4 py-2 border rounded-lg focus:outline-none"
                   style={{
-                    backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                    backgroundColor: formData.backgroundColor,
                     borderColor: formData.accentColor + '40',
                     color: formData.textColor
                   }}
@@ -418,7 +418,7 @@ export default function SettingsTab({ profile, onUpdate, onThemeChange }: Settin
                       backgroundColor: formData.accentColor,
                       borderColor: formData.accentColor
                     } : {
-                      backgroundColor: lightenColor(formData.backgroundColor, 0.08),
+                      backgroundColor: formData.backgroundColor,
                       borderColor: formData.accentColor + '40',
                       color: formData.textColor
                     }}
