@@ -1,4 +1,4 @@
-import { Domain, Theme } from '../../types/database'
+import type { Domain, Theme } from '../../types/database'
 import { motion } from 'framer-motion'
 
 interface DomainCardProps {

@@ -1,4 +1,4 @@
-import { Link as LinkType, Theme } from '../../types/database'
+import type { Link as LinkType, Theme } from '../../types/database'
 import { motion } from 'framer-motion'
 
 interface LinkButtonProps {

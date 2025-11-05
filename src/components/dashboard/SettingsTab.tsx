@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { Profile, Theme } from '../../types/database'
-import { motion } from 'framer-motion'
+import type { Profile, Theme } from '../../types/database'
 
 interface SettingsTabProps {
   profile: Profile | null

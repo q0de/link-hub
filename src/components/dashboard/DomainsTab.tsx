@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { Domain } from '../../types/database'
+import type { Domain } from '../../types/database'
 import { motion } from 'framer-motion'
 
 interface DomainsTabProps {

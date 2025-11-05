@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { Link as LinkType, Domain, ClickEvent } from '../../types/database'
+import type { Link as LinkType, Domain, ClickEvent } from '../../types/database'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 
 interface AnalyticsTabProps {
@@ -141,7 +141,7 @@ export default function AnalyticsTab({ profileId }: AnalyticsTabProps) {
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
-                data={domainStats}
+                data={domainStats as any}
                 dataKey="clicks"
                 nameKey="domain_name"
                 cx="50%"
@@ -149,7 +149,7 @@ export default function AnalyticsTab({ profileId }: AnalyticsTabProps) {
                 outerRadius={100}
                 label
               >
-                {domainStats.map((entry, index) => (
+                {domainStats.map((_, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>

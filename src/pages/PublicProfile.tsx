@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Profile, Link as LinkType, Domain, Theme } from '../types/database'
+import type { Profile, Link as LinkType, Domain, Theme } from '../types/database'
 import { motion } from 'framer-motion'
 import ProfileHeader from '../components/public/ProfileHeader'
 import LinkButton from '../components/public/LinkButton'

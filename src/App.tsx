@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
-import { User } from '@supabase/supabase-js'
+import type { User } from '@supabase/supabase-js'
 import Auth from './pages/Auth'
 import Dashboard from './pages/Dashboard'
 import PublicProfile from './pages/PublicProfile'

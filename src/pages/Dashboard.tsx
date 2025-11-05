@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Profile } from '../types/database'
+import type { Profile } from '../types/database'
 import LinksTab from '../components/dashboard/LinksTab'
 import DomainsTab from '../components/dashboard/DomainsTab'
 import SettingsTab from '../components/dashboard/SettingsTab'

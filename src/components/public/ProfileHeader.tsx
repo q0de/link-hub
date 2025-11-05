@@ -1,4 +1,4 @@
-import { Profile, Theme } from '../../types/database'
+import type { Profile, Theme } from '../../types/database'
 
 interface ProfileHeaderProps {
   profile: Profile
